@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Spawner.unity
+    guid: b7395089a6cc6bb4b801f1e0d7f1e0f7
+  - enabled: 1
+    path: Assets/Scenes/Heatmapscene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Graphs.unity
+    guid: 6ebe23bed9aa0d540a6227d6279b38eb
   m_configObjects: {}
