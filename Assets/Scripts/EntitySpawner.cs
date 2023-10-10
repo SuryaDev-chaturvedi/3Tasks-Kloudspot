@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EntitySpawner : MonoBehaviour
 {
-    public GameObject entityPrefab; // Assign your entity prefab in the Unity Inspector
+    public GameObject entityPrefab;  // Assign your entity prefab in the Unity Inspector
     public Transform spawnContainer; // Assign the empty GameObject container in the Unity Inspector
 
     [Header("X and Z Position")]
