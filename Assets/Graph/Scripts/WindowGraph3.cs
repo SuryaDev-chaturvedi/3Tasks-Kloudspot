@@ -1,37 +1,128 @@
-﻿// We try to update the graph in every 40 seconds:
-
 using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using CodeMonkey.Utils;
+using Random = UnityEngine.Random;
+using System.Linq;
 
-public class Window_Graph : MonoBehaviour {
-    
+public class WindowGraph3 : MonoBehaviour
+{
     [SerializeField] private Sprite circleSpritewhite;   // Yesterday
     [SerializeField] private Sprite circleSpriteRed;     // Today
     private RectTransform graphContainer;
     private RectTransform labelTemplateX;
     private RectTransform labelTemplateY;
- // private RectTransform dashTemplateX;
- // private RectTransform dashTemplateY;
+    // private RectTransform dashTemplateX;
+    // private RectTransform dashTemplateY;
 
-    private void Awake() {
+
+    // Updating the graph, when even is true than add 1,2,-3... else ....
+    bool even = true;
+    List<int> valueList;
+    List<int> valueList2;
+    private void Awake()
+    {
         graphContainer = transform.Find("graphContainer").GetComponent<RectTransform>();
         labelTemplateX = graphContainer.Find("labelTemplateX").GetComponent<RectTransform>();
         labelTemplateY = graphContainer.Find("labelTemplateY").GetComponent<RectTransform>();
-     // dashTemplateX = graphContainer.Find("dashTemplateX").GetComponent<RectTransform>(); 
-     // dashTemplateY = graphContainer.Find("dashTemplateY").GetComponent<RectTransform>();
+        // dashTemplateX = graphContainer.Find("dashTemplateX").GetComponent<RectTransform>(); 
+        // dashTemplateY = graphContainer.Find("dashTemplateY").GetComponent<RectTransform>();
 
-        List<int> valueList = new List<int>() { 149, 264, 142, 57, 258, 352, 168, 134, 150, 246, 142, 352 };
+        valueList = new List<int>() { 149, 264, 142, 57, 258, 352, 168, 134, 150, 246, 142, 352 };
         ShowGraph(valueList, (int _i) => (_i + 1) + "AM", (float _f) => Mathf.RoundToInt(_f) + "-" + Mathf.RoundToInt(_f + 50));
 
-        List<int> valueList2 = new List<int>() { 259, 164, 142, 157, 158, 252, 168, 134, 250, 46, 42, 52};
-        ShowGraph2(valueList2, (int _i) => (_i + 1) + "AM", (float _f) => Mathf.RoundToInt(_f) + "-" + Mathf.RoundToInt(_f+50));
+        valueList2 = new List<int>() { 259, 164, 142, 157, 158, 252, 168, 134, 250, 46, 42, 52 };
+        ShowGraph2(valueList2, (int _i) => (_i + 1) + "AM", (float _f) => Mathf.RoundToInt(_f) + "-" + Mathf.RoundToInt(_f + 50));
+
     }
 
-    private GameObject CreateCircle(Vector2 anchoredPosition) {
+    IEnumerator changegraph()
+    {
+        yield return new WaitForSeconds(0.5f);
+        int[] arr = { -1, -2, -3, -4, -5, 1, 2, 3, 4, 5, -6, 7, -7, 8, -8, 9, -9, 10, 10, 11, -11, 12, -12, 13, -13 };
+
+        // first delete the values of graph then draw them---
+        int Delete_from_index = 4;
+
+        Transform graph_container_parent = graphContainer.transform;
+
+        // Check if the parent has children.
+        if (graph_container_parent.childCount > Delete_from_index)
+        {
+            // Loop through the children starting from the 5th position.
+            for (int i = Delete_from_index; i < graph_container_parent.childCount; i++)
+            {
+                // Destroy the child GameObject.
+                Destroy(graph_container_parent.GetChild(i).gameObject);
+            }
+        }
+
+
+        for (int i = 0; i < valueList.Count; i = i + 2)
+        {
+            int randomIndex = Random.Range(0, arr.Length);
+            if (even)
+            {
+                if (valueList[i] + arr[randomIndex] <= valueList.Max() && valueList[i] + arr[randomIndex] >= valueList.Min())
+                    valueList[i] += arr[randomIndex];
+
+                if (i + 1 < valueList.Count)
+                {
+                    if (valueList[i] + arr[randomIndex] <= valueList.Max() && valueList[i] + arr[randomIndex] >= valueList.Min())
+                        valueList[i + 1] += arr[randomIndex];
+                }
+                even = false;
+            }
+            else
+            {
+                if (valueList[i] + arr[randomIndex] <= arr.Max() && valueList[i] + arr[randomIndex] >= valueList.Min())
+                    valueList[i] += arr[randomIndex];
+                if (i + 1 < valueList.Count)
+                {
+                    if (valueList[i] + arr[randomIndex] <= arr.Max() && valueList[i] + arr[randomIndex] >= valueList.Min())
+                        valueList[i + 1] += arr[randomIndex];
+                }
+                even = true;
+            }
+        }
+
+        ShowGraph(valueList, (int _i) => (_i + 1) + "AM", (float _f) => Mathf.RoundToInt(_f) + "-" + Mathf.RoundToInt(_f + 50));
+
+        for (int i = 0; i < valueList2.Count; i = i + 2)
+        {
+            int randomIndex = Random.Range(0, arr.Length);
+            if (even)
+            {
+                if (valueList2[i] + arr[randomIndex] <= valueList2.Max() && valueList2[i] + arr[randomIndex] >= valueList2.Min())
+                    valueList2[i] += arr[randomIndex];
+                if (i + 1 < valueList2.Count)
+                {
+                    if (valueList2[i] + arr[randomIndex] <= valueList2.Max() && valueList2[i] + arr[randomIndex] >= valueList2.Min())
+                        valueList2[i + 1] += arr[randomIndex];
+                }
+                even = false;
+            }
+            else
+            {
+                if (valueList2[i] + arr[randomIndex] <= valueList2.Max() && valueList2[i] + arr[randomIndex] >= valueList2.Min())
+                    valueList2[i] += arr[randomIndex];
+                if (i + 1 < valueList2.Count)
+                {
+                    if (valueList2[i] + arr[randomIndex] <= valueList2.Max() && valueList2[i] + arr[randomIndex] >= valueList2.Min())
+                        valueList2[i + 1] += arr[randomIndex];
+                }
+                even = true;
+            }
+        }
+
+        ShowGraph2(valueList2, (int _i) => (_i + 1) + "AM", (float _f) => Mathf.RoundToInt(_f) + "-" + Mathf.RoundToInt(_f + 50));
+
+    }
+
+    private GameObject CreateCircle(Vector2 anchoredPosition)
+    {
         GameObject gameObject = new GameObject("circle", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
         gameObject.GetComponent<Image>().sprite = circleSpriteRed;
@@ -41,11 +132,6 @@ public class Window_Graph : MonoBehaviour {
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
         return gameObject;
-    }
-
-    IEnumerator delay1sec()
-    {
-        yield return new WaitForSeconds(.7f);
     }
 
     private GameObject CreateCircle2(Vector2 anchoredPosition)
@@ -61,11 +147,14 @@ public class Window_Graph : MonoBehaviour {
         return gameObject;
     }
 
-    private void ShowGraph(List<int> valueList, Func<int, string> getAxisLabelX = null, Func<float, string> getAxisLabelY = null) {
-        if (getAxisLabelX == null) {
+    private void ShowGraph(List<int> valueList, Func<int, string> getAxisLabelX = null, Func<float, string> getAxisLabelY = null)
+    {
+        if (getAxisLabelX == null)
+        {
             getAxisLabelX = delegate (int _i) { return _i.ToString(); };
         }
-        if (getAxisLabelY == null) {
+        if (getAxisLabelY == null)
+        {
             getAxisLabelY = delegate (float _f) { return Mathf.RoundToInt(_f).ToString(); };
         }
 
@@ -74,13 +163,14 @@ public class Window_Graph : MonoBehaviour {
         float xSize = 50f;   // initialy is=t is 50, I made it 5
 
         GameObject lastCircleGameObject = null;
-        for (int i = 0; i < valueList.Count; i++) {
-            StartCoroutine(delay1sec());
+        for (int i = 0; i < valueList.Count; i++)
+        {
             float xPosition = xSize + i * xSize;
             float yPosition = (valueList[i] / yMaximum) * graphHeight;
 
             GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
-            if (lastCircleGameObject != null) {
+            if (lastCircleGameObject != null)
+            {
                 CreateDotConnection(lastCircleGameObject.GetComponent<RectTransform>().anchoredPosition, circleGameObject.GetComponent<RectTransform>().anchoredPosition);
             }
             lastCircleGameObject = circleGameObject;
@@ -91,17 +181,17 @@ public class Window_Graph : MonoBehaviour {
             labelX.anchoredPosition = new Vector2(xPosition, -7f);
             labelX.GetComponent<Text>().text = getAxisLabelX(i);
 
-            //      RectTransform dashX = Instantiate(dashTemplateX);
-            /*     dashX.SetParent(graphContainer, false);
+            //   RectTransform dashX = Instantiate(dashTemplateX);
+            /*   dashX.SetParent(graphContainer, false);
                  dashX.gameObject.SetActive(true);
                  dashX.anchoredPosition = new Vector2(xPosition, -3f);
             */
-           
+
         }
 
         int separatorCount = 8;
-        for (int i = 0; i <= separatorCount; i++) {
-            StartCoroutine(delay1sec());
+        for (int i = 0; i <= separatorCount; i++)
+        {
             RectTransform labelY = Instantiate(labelTemplateY);
             labelY.SetParent(graphContainer, false);
             labelY.gameObject.SetActive(true);
@@ -121,7 +211,7 @@ public class Window_Graph : MonoBehaviour {
     {
         if (getAxisLabelX == null)
         {
-            getAxisLabelX = delegate (int _i) { return _i.ToString(); }; 
+            getAxisLabelX = delegate (int _i) { return _i.ToString(); };
         }
         if (getAxisLabelY == null)
         {
@@ -135,7 +225,6 @@ public class Window_Graph : MonoBehaviour {
         GameObject lastCircleGameObject = null;
         for (int i = 0; i < valueList.Count; i++)
         {
-            StartCoroutine(delay1sec());
             float xPosition = xSize + i * xSize;
             float yPosition = (valueList[i] / yMaximum) * graphHeight;
             GameObject circleGameObject = CreateCircle2(new Vector2(xPosition, yPosition));
@@ -162,7 +251,6 @@ public class Window_Graph : MonoBehaviour {
         int separatorCount = 8;
         for (int i = 0; i <= separatorCount; i++)
         {
-            StartCoroutine(delay1sec());
             RectTransform labelY = Instantiate(labelTemplateY);
             labelY.SetParent(graphContainer, false);
             labelY.gameObject.SetActive(true);
@@ -178,7 +266,8 @@ public class Window_Graph : MonoBehaviour {
         }
     }
 
-    private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB) {
+    private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB)
+    {
         GameObject gameObject = new GameObject("dotConnection", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
         gameObject.GetComponent<Image>().color = Color.red; /*   new Color(1,1,1, .5f);  */
@@ -205,5 +294,10 @@ public class Window_Graph : MonoBehaviour {
         rectTransform.sizeDelta = new Vector2(distance, 3f);
         rectTransform.anchoredPosition = dotPositionA + dir * distance * .5f;
         rectTransform.localEulerAngles = new Vector3(0, 0, UtilsClass.GetAngleFromVectorFloat(dir));
+    }
+
+    public void Updatebtn()
+    {
+        StartCoroutine(changegraph());
     }
 }
